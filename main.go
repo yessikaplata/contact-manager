@@ -45,6 +45,31 @@ func loadContacts(contacts *[]Contact) error {
 	return nil
 }
 
+func addContact(reader *bufio.Reader, contacts *[]Contact) {
+	var contact Contact
+	fmt.Print("Nombre: ")
+	contact.Name, _ = reader.ReadString('\n')
+	fmt.Print("Correo Electrónico: ")
+	contact.Email, _ = reader.ReadString('\n')
+	fmt.Print("Teléfono: ")
+	contact.Phone, _ = reader.ReadString('\n')
+	*contacts = append(*contacts, contact)
+	if err := saveContacts(*contacts); err != nil {
+		fmt.Println("Error al guradar el contacto", err)
+	}
+}
+
+func printContacts(contacts []Contact) {
+	if len(contacts) == 0 {
+		fmt.Println("No existen contactos.")
+	} else {
+		fmt.Println(">>>Lista de contactos:")
+	}
+	for index, contact := range contacts {
+		fmt.Printf("%d. Nombre: %s Correo Electrónico:%s Teléfono: %s\n", index+1, contact.Name, contact.Email, contact.Phone)
+	}
+}
+
 func main() {
 	contacts := []Contact{}
 
@@ -70,26 +95,9 @@ func main() {
 
 		switch option {
 		case 1:
-			var contact Contact
-			fmt.Print("Nombre: ")
-			contact.Name, _ = reader.ReadString('\n')
-			fmt.Print("Correo Electrónico: ")
-			contact.Email, _ = reader.ReadString('\n')
-			fmt.Print("Teléfono: ")
-			contact.Phone, _ = reader.ReadString('\n')
-			contacts = append(contacts, contact)
-			if err := saveContacts(contacts); err != nil {
-				fmt.Println("Error al guradar el contacto", err)
-			}
+			addContact(reader, &contacts)
 		case 2:
-			if len(contacts) == 0 {
-				fmt.Println("No existen contactos.")
-			} else {
-				fmt.Println(">>>Lista de contactos:")
-			}
-			for index, contact := range contacts {
-				fmt.Printf("%d. Nombre: %s Correo Electrónico:%s Teléfono: %s\n", index+1, contact.Name, contact.Email, contact.Phone)
-			}
+			printContacts(contacts)
 		case 3:
 			return
 		default:
